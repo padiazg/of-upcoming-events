@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Timeline | Basic demo</title>
+
+  <style type="text/css">
+    body, html {
+      font-family: sans-serif;
+    }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div id="visualization"></div>
+Don't forget to check <a href="https://github.com/openfaas/faas/blob/master/community.md" target="_blank">https://github.com/openfaas/faas/blob/master/community.md</a> for more info.
+
+<script type="text/javascript">
+  const createItems = data => data.map((d, i) => {
+    const item = {
+      content: d.content,
+      start: d.start
+    }
+
+    if (d.link) {
+      item.content =  '<a href="' + d.link + '" target="_blank">' + d.content + '</a>';
+    }
+
+    if (d.location) {
+      item.content +=  '<br>' + d.location + '';
+    }
+
+    if (d.speaker) {
+      item.content +=  '<br><i>' + d.speaker + '</i>';
+    }
+
+    return item;
+  }); // createItems ...
+
+  const drawTimeline = vis_items => {
+    // DOM element where the Timeline will be attached
+    const container = document.getElementById('visualization');
+
+    // Create a DataSet (allows two way data-binding)
+    const items = new vis.DataSet(vis_items);
+
+    // Configuration for the Timeline
+    var options = {};
+
+    // Create a Timeline
+    const timeline = new vis.Timeline(container, items, options);
+  } // drawTimeline ...
+
+  let url = 'https://raw.githubusercontent.com/padiazg/of-upcoming-events/master/upcoming_events.json';
+
+  axios.get(url)
+    .then(result => {
+      console.log('result =>', result);
+      const items = createItems(result.data);
+      drawTimeline(items);
+    })
+   .catch(function (error) {
+     // handle error
+     console.log(error);
+   });
+
+</script>
+</body>
