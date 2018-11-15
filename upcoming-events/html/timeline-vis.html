@@ -53,8 +53,8 @@ Don't forget to check <a href="https://github.com/openfaas/faas/blob/master/comm
     const timeline = new vis.Timeline(container, items, options);
   } // drawTimeline ...
 
-  let url = 'https://raw.githubusercontent.com/padiazg/of-upcoming-events/master/upcoming_events.json';
-
+  // let url = 'https://raw.githubusercontent.com/padiazg/of-upcoming-events/master/upcoming_events.json';
+  let url = 'https://padiazg.o6s.io/upcoming-events-json';
   axios.get(url)
     .then(result => {
       console.log('result =>', result);
