@@ -20,12 +20,12 @@ Don't forget to check <a href="https://github.com/openfaas/faas/blob/master/comm
 <script type="text/javascript">
   const createItems = data => data.map((d, i) => {
     const item = {
-      content: d.content,
-      start: d.start
+      content: d.event,
+      start: d.date
     }
 
     if (d.link) {
-      item.content =  '<a href="' + d.link + '" target="_blank">' + d.content + '</a>';
+      item.event =  '<a href="' + d.link + '" target="_blank">' + d.event + '</a>';
     }
 
     if (d.location) {
