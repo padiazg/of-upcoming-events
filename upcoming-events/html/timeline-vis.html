@@ -12,6 +12,61 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css" />
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js"></script>
+
+  <script id="item-template" type="text/x-handlebars-template">
+    <table class="score">
+      <tr>
+        <td class="description">{{location}}</td>
+      </tr>
+      <tr>
+        <td>
+            <img src="http://flagpedia.net/data/flags/mini/{{flagId}}.png" width="31" height="20" alt="{{flagId}}">
+            {{#if link}}
+            <br />
+            <a href="{{link}}" target="_blank">link</a>
+            {{/if}}
+        </td>
+      </tr>
+    </table>
+  </script>
+
+  <style type="text/css">
+    body, html {
+      font-family: sans-serif;
+      font-size: 10pt;
+    }
+
+    .vis.timeline .item {
+      border-color: #acacac;
+      background-color: #efefef;
+      box-shadow: 5px 5px 10px rgba(128,128,128, 0.3);
+    }
+
+    table .description {
+      font-style: italic;
+    }
+
+    #visualization {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+    }
+    .logo img {
+      width: 120px;
+    }
+    .vis-item-content a {
+        color: dimgray;
+        text-decoration: none;
+    }
+  </style>
+
+  <!-- <script src="upcoming-events.js"></script> -->
 </head>
 <body>
 <div id="visualization"></div>
@@ -27,21 +82,38 @@ Don't forget to check <a href="https://github.com/openfaas/faas/blob/master/comm
   } // monthRange ...
 
   const createItems = data => data.map((d, i) => {
+      let title = d.event;
+      let flagId = '';
+      let content = '??';
+
+      // try to get a country id
+      const regex_location = /(\w+),?\s?(\w+)?/i
+      if (regex_location.test(d.location)) {
+          const items = regex_location.exec(d.location);
+          console.log(`d.location => ${JSON.stringify(items, null, 2)}`);
+          flagId = String(items[2]).toLowerCase();
+      } else {
+
+      }
+
+      // if (d.link) {
+      //   title = '<a href="' + d.link + '" target="_blank">' + title + '</a>';
+      // }
+
+      if (d.location) {
+        title +=  '<br>' + d.location + '';
+      }
+
+      if (d.speaker) {
+        title +=  '<br><i>' + d.speaker + '</i>';
+      }
+
     const item = {
-      content: d.event,
-      start: d.date
-    }
-
-    if (d.link) {
-      item.event =  '<a href="' + d.link + '" target="_blank">' + d.event + '</a>';
-    }
-
-    if (d.location) {
-      item.content +=  '<br>' + d.location + '';
-    }
-
-    if (d.speaker) {
-      item.content +=  '<br><i>' + d.speaker + '</i>';
+      content,
+      title,
+      start: d.date,
+      flagId,
+      link: d.link
     }
 
     return item;
@@ -54,12 +126,20 @@ Don't forget to check <a href="https://github.com/openfaas/faas/blob/master/comm
     // Create a DataSet (allows two way data-binding)
     const items = new vis.DataSet(vis_items);
 
+    // create a handlebars template
+    const source   = document.getElementById('item-template').innerHTML;
+    const template = Handlebars.compile(document.getElementById('item-template').innerHTML);
+
     // Configuration for the Timeline
     var options = {
         moveable: true,
         zoomable: true,
         zoomKey: 'altKey',
-        // zoomMax: '2592000000'
+        showTooltips: true,
+        tooltip: {
+            followMouse: false,
+        },
+        template
     };
 
     // Create a Timeline
@@ -70,6 +150,7 @@ Don't forget to check <a href="https://github.com/openfaas/faas/blob/master/comm
 
     timeline.setWindow(range)
   } // drawTimeline ...
+
 
   // let url = 'https://raw.githubusercontent.com/padiazg/of-upcoming-events/master/upcoming_events.json';
   let url = 'https://padiazg.o6s.io/upcoming-events-json';
@@ -83,6 +164,10 @@ Don't forget to check <a href="https://github.com/openfaas/faas/blob/master/comm
      // handle error
      console.log(error);
    });
+
+   // console.log('events =>', events);
+   // const items = createItems(events);
+   // drawTimeline(items);
 
 </script>
 </body>
