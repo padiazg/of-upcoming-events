@@ -18,6 +18,14 @@
 Don't forget to check <a href="https://github.com/openfaas/faas/blob/master/community.md" target="_blank">https://github.com/openfaas/faas/blob/master/community.md</a> for more info.
 
 <script type="text/javascript">
+  const monthRange = date => {
+    const fiftyDays = (24 * 60 * 60 * 1000) * 15;  // 15 days as milliseconds
+    return {
+      start: new Date(date.getTime() - fiftyDays),
+      end: new Date(date.getTime() + fiftyDays)
+    }
+  } // monthRange ...
+
   const createItems = data => data.map((d, i) => {
     const item = {
       content: d.event,
@@ -47,10 +55,20 @@ Don't forget to check <a href="https://github.com/openfaas/faas/blob/master/comm
     const items = new vis.DataSet(vis_items);
 
     // Configuration for the Timeline
-    var options = {};
+    var options = {
+        moveable: true,
+        zoomable: true,
+        zoomKey: 'altKey',
+        // zoomMax: '2592000000'
+    };
 
     // Create a Timeline
     const timeline = new vis.Timeline(container, items, options);
+
+    // set the visible range
+    const range = monthRange(new Date());
+
+    timeline.setWindow(range)
   } // drawTimeline ...
 
   // let url = 'https://raw.githubusercontent.com/padiazg/of-upcoming-events/master/upcoming_events.json';
