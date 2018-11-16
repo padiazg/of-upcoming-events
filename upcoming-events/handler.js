@@ -1,6 +1,6 @@
 "use strict"
 const fs = require("fs");
-const path = require('path');    
+const path = require('path');
 const filePath = path.join(__dirname, '/html/timeline-vis.html');
 
 module.exports = (context, callback) => {
