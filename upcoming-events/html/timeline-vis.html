@@ -90,7 +90,7 @@ Don't forget to check <a href="https://github.com/openfaas/faas/blob/master/comm
       const regex_location = /(\w+),?\s?(\w+)?/i
       if (regex_location.test(d.location)) {
           const items = regex_location.exec(d.location);
-          console.log(`d.location => ${JSON.stringify(items, null, 2)}`);
+          // console.log(`d.location => ${JSON.stringify(items, null, 2)}`);
           flagId = String(items[2]).toLowerCase();
       } else {
 
@@ -113,7 +113,8 @@ Don't forget to check <a href="https://github.com/openfaas/faas/blob/master/comm
       title,
       start: d.date,
       flagId,
-      link: d.link
+      link: d.link,
+      speaker
     }
 
     return item;
